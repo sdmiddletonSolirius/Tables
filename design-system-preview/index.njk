@@ -1,0 +1,47 @@
+{% from "components/table/_macro.njk" import onsTable %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tables in the ONS Design System context</title>
+    <link rel="stylesheet" href="./assets/css/main.css">
+    <link rel="stylesheet" href="./preview.css">
+</head>
+<body class="design-system-preview">
+    <main class="preview-layout">
+        <h1>Data visualisation tables in the Design System</h1>
+        <p>Using @ons/design-system {{ designSystemVersion }}. Compare a native table with the data visualisation table rendered below in the same document.</p>
+        <p><a href="../">View the original embedded examples</a></p>
+        <nav aria-label="Choose a table configuration" class="preview-choices">
+            <a href="?example=example1-ungrouped-basic">Basic ungrouped</a>
+            <a href="?example=example2-ungrouped-complex">Complex ungrouped</a>
+            <a href="?example=example5-ungrouped-basic-long">Long ungrouped with pagination</a>
+            <a href="?example=example3-grouped-row-basic">Basic grouped</a>
+            <a href="?example=example4-grouped-row-complex">Complex grouped</a>
+        </nav>
+        <section aria-labelledby="reference-heading">
+            <h2 id="reference-heading">Native Design System table (reference)</h2>
+            {{
+                onsTable({
+                    "caption": "Example native table",
+                    "ths": [{"value": "Category"}, {"value": "Value", "numeric": true}],
+                    "trs": [
+                        {"tds": [{"value": "First", "heading": true}, {"value": "12", "numeric": true}]},
+                        {"tds": [{"value": "Second", "heading": true}, {"value": "34", "numeric": true}]}
+                    ]
+                })
+            }}
+        </section>
+        <section aria-labelledby="custom-heading">
+            <h2 id="custom-heading">Data visualisation table</h2>
+            <div id="table-container"></div>
+            <p id="source"></p>
+        </section>
+    </main>
+    <script src="https://cdn.ons.gov.uk/vendor/d3/6.3.0/d3.min.js"></script>
+    <script src="https://cdn.ons.gov.uk/vendor/pym/1.3.2/pym.js"></script>
+    <script src="../lib/colours.js"></script>
+    <script type="module" src="./preview.js"></script>
+</body>
+</html>

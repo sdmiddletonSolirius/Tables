@@ -1,0 +1,12 @@
+{
+  "name": "ons-tables-preview",
+  "private": true,
+  "scripts": {
+    "build:preview": "node scripts/build-preview.mjs",
+    "test": "npm run build:preview && node --test tests/*.test.mjs"
+  },
+  "devDependencies": {
+    "@ons/design-system": "73.12.0",
+    "nunjucks": "3.2.4"
+  }
+}

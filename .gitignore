@@ -1,1 +1,4 @@
 /*/lfs-*.csv
+node_modules/
+design-system-preview/assets/
+design-system-preview/index.html

@@ -7,6 +7,13 @@ let container = d3.select('#table-container');
 let tableData;
 let pymChild = null;
 let currentPage = 1;
+const designSystemPreview = document.body.classList.contains("design-system-preview");
+const cellClass = type => {
+    const original = type === "n" ? "col--number" : type === "d" ? "col--date" : "col--text";
+    return designSystemPreview
+        ? `ons-table__cell ons-table__cell--top${type === "n" ? " ons-table__cell--numeric" : ""}`
+        : original;
+};
 
 /* =========================================================
    MAIN RENDER FUNCTION
@@ -298,15 +305,21 @@ Renders configured columns as small horizontal bars.
     /* =========================================================
        SCROLL WRAPPER
        ========================================================= */
-    const scrollWrapper = container.append("div")
-        .attr("class", "table-scroll")
+    const scrollWrapper = (designSystemPreview
+        ? container.append("div").attr("class", "ons-table-scrollable ons-table-scrollable--on")
+        : container).append("div")
+        .attr("class", designSystemPreview ? "table-scroll ons-table-scrollable__content" : "table-scroll")
+        .attr("tabindex", designSystemPreview ? 0 : null)
+        .attr("role", designSystemPreview ? "region" : null)
+        .attr("aria-label", designSystemPreview ? "Data visualisation table, scroll horizontally" : null)
         .style("--min-col-width", config.minColWidth + "px")
         .style("--max-col-width", config.maxColWidth + "px");
 
-    const table = scrollWrapper.append("table");
+    const table = scrollWrapper.append("table")
+        .attr("class", designSystemPreview ? "ons-table" : null);
 
     table.append("caption")
-        .attr("class", "visually-hidden")
+        .attr("class", designSystemPreview ? "ons-table__caption ons-u-vh" : "visually-hidden")
         .text(config.tableDescription);
 
 
@@ -330,11 +343,13 @@ Renders configured columns as small horizontal bars.
     /* =========================================================
        THEAD
        ========================================================= */
-    const thead = table.append("thead");
-    const headerRow = thead.append("tr");
-    headerRow.append("td");
+    const thead = table.append("thead").attr("class", designSystemPreview ? "ons-table__head" : null);
+    const headerRow = thead.append("tr").attr("class", designSystemPreview ? "ons-table__row" : null);
+    headerRow.append(designSystemPreview ? "th" : "td")
+        .attr("scope", designSystemPreview ? "col" : null)
+        .attr("class", designSystemPreview ? "ons-table__header ons-table__header--top" : null);
 
-    headerRow.selectAll("th")
+    headerRow.selectAll("th.data-col")
         .data(columnBlocks.map(d => ({
             col: d.kind === "sparkline" ? d.title : d.col,
             id: d.kind === "sparkline" ? d.title : d.col,
@@ -344,17 +359,15 @@ Renders configured columns as small horizontal bars.
         .append("th")
         .attr("scope", "col")
         .attr("id", d => d.col)
-        .attr("class", d =>
-            d.type === "n" ? "col--number" :
-                d.type === "d" ? "col--date" :
-                    "col--text"
-        )
+        .attr("class", d => designSystemPreview
+            ? `ons-table__header ons-table__header--top${d.type === "n" ? " ons-table__header--numeric" : ""}`
+            : d.type === "n" ? "col--number" : d.type === "d" ? "col--date" : "col--text")
         .text(d => d.col);
 
     /* =========================================================
        TBODY
        ========================================================= */
-    const tbody = table.append("tbody");
+    const tbody = table.append("tbody").attr("class", designSystemPreview ? "ons-table__body" : null);
     const colSpan = valueColumns.length + 1;
 
     /* =========================================================
@@ -489,12 +502,12 @@ Renders configured columns as small horizontal bars.
             rows.forEach((row) => {
                 const rowIndex = tableData.indexOf(row);
                 const rowId = `ungrouped-r${rowIndex + 1}`;
-                const tr = tbody.append("tr");
+                const tr = tbody.append("tr").attr("class", designSystemPreview ? "ons-table__row" : null);
 
                 tr.append("th")
                     .attr("id", rowId)
                     .attr("scope", "row")
-                    .attr("class", "col--text")
+                    .attr("class", cellClass("t"))
                     .text(row[nameColumn]);
 
                 tr.selectAll("td")
@@ -531,11 +544,7 @@ Renders configured columns as small horizontal bars.
                     .enter()
                     .append("td")
                     .attr("headers", d => `${rowId} ${d.col}`)
-                    .attr("class", d =>
-                        d.type === "n" ? "col--number" :
-                            d.type === "d" ? "col--date" :
-                                "col--text"
-                    )
+                    .attr("class", d => cellClass(d.type))
 
 
 
@@ -661,11 +670,14 @@ Renders configured columns as small horizontal bars.
 
 
             const groupTh = tbody.append("tr")
+                .attr("class", designSystemPreview ? "ons-table__row" : null)
                 .append("th")
                 .attr("id", groupId)
                 .attr("scope", "colgroup")
                 .attr("colspan", colSpan)
-                .classed("colgroup-header", true);
+                .classed("colgroup-header", true)
+                .classed("ons-table__header", designSystemPreview)
+                .classed("ons-table__header--top", designSystemPreview);
 
             groupTh.append("span")
                 .attr("class", "sticky-first-col")
@@ -678,13 +690,13 @@ Renders configured columns as small horizontal bars.
             rows.forEach((row) => {
                 const rowIndex = allGroupRows.indexOf(row);
                 const rowId = `${groupId}-r${rowIndex + 1}`;
-                const tr = tbody.append("tr");
+                const tr = tbody.append("tr").attr("class", designSystemPreview ? "ons-table__row" : null);
 
                 tr.append("th")
                     .attr("id", rowId)
                     .attr("scope", "row")
                     .attr("headers", groupId)
-                    .attr("class", "col--text")
+                    .attr("class", cellClass("t"))
                     .text(row[nameColumn]);
 
                 tr.selectAll("td")
@@ -721,11 +733,7 @@ Renders configured columns as small horizontal bars.
                     .enter()
                     .append("td")
                     .attr("headers", d => `${rowId} ${d.col}`)
-                    .attr("class", d =>
-                        d.type === "n" ? "col--number" :
-                            d.type === "d" ? "col--date" :
-                                "col--text"
-                    )
+                    .attr("class", d => cellClass(d.type))
 
 
                     .each(function (d) {

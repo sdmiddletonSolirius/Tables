@@ -1,0 +1,88 @@
+.preview-layout {
+    max-width: 75rem;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.preview-layout section {
+    margin-top: 3rem;
+}
+
+.preview-choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.design-system-preview .table-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.design-system-preview .table-scroll table {
+    min-width: 100%;
+    width: max-content;
+}
+
+.design-system-preview .table-scroll th,
+.design-system-preview .table-scroll td {
+    min-width: var(--min-col-width);
+    max-width: var(--max-col-width);
+    overflow-wrap: anywhere;
+}
+
+.design-system-preview .table-scroll.freeze-first-col th:first-child,
+.design-system-preview .table-scroll.freeze-first-col td:first-child,
+.design-system-preview .table-scroll.freeze-first-col .sticky-first-col {
+    position: sticky;
+    left: 0;
+    background: var(--ons-color-page-light);
+}
+
+.design-system-preview .table-scroll.freeze-first-col th:first-child {
+    z-index: 2;
+}
+
+.design-system-preview .table-scroll.freeze-first-col th.colgroup-header {
+    position: relative;
+}
+
+.design-system-preview .table-scroll.freeze-first-col .sticky-first-col {
+    display: inline-block;
+}
+
+.design-system-preview .table-legend,
+.design-system-preview .pagination,
+.design-system-preview .pagination-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.design-system-preview .pagination {
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+.design-system-preview .pagination-controls button {
+    padding: 0.25rem 0.75rem;
+    border: 1px solid var(--ons-color-borders);
+    background: var(--ons-color-page-light);
+    color: var(--ons-color-text);
+    cursor: pointer;
+}
+
+.design-system-preview .pagination-controls button:focus-visible {
+    outline: 3px solid var(--ons-color-focus);
+}
+
+.design-system-preview .pagination-controls button.active {
+    background: var(--ons-color-branded);
+    color: var(--ons-color-white);
+}
+
+.design-system-preview .pagination-controls button:disabled {
+    opacity: 0.5;
+    cursor: default;
+}

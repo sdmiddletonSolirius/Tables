@@ -8,6 +8,13 @@ let tableData;
 let pymChild = null;
 
 let currentPage = 1;
+const designSystemPreview = document.body.classList.contains("design-system-preview");
+const cellClass = type => {
+    const original = type === "n" ? "col--number" : type === "d" ? "col--date" : "col--text";
+    return designSystemPreview
+        ? `ons-table__cell ons-table__cell--top${type === "n" ? " ons-table__cell--numeric" : ""}`
+        : original;
+};
 
 /* =========================================================
    MAIN RENDER FUNCTION
@@ -282,15 +289,21 @@ function drawTable() {
     /* =========================================================
        SCROLL WRAPPER
     ========================================================= */
-    const scrollWrapper = container.append("div")
-        .attr("class", "table-scroll")
+    const scrollWrapper = (designSystemPreview
+        ? container.append("div").attr("class", "ons-table-scrollable ons-table-scrollable--on")
+        : container).append("div")
+        .attr("class", designSystemPreview ? "table-scroll ons-table-scrollable__content" : "table-scroll")
+        .attr("tabindex", designSystemPreview ? 0 : null)
+        .attr("role", designSystemPreview ? "region" : null)
+        .attr("aria-label", designSystemPreview ? "Data visualisation table, scroll horizontally" : null)
         .style("--min-col-width", config.minColWidth + "px")
         .style("--max-col-width", config.maxColWidth + "px");
 
-    const table = scrollWrapper.append("table");
+    const table = scrollWrapper.append("table")
+        .attr("class", designSystemPreview ? "ons-table" : null);
 
     table.append("caption")
-        .attr("class", "visually-hidden")
+        .attr("class", designSystemPreview ? "ons-table__caption ons-u-vh" : "visually-hidden")
         .text(config.tableDescription);
 
     /* =========================================================
@@ -313,12 +326,12 @@ function drawTable() {
     /* =========================================================
        THEAD
     ========================================================= */
-    const thead = table.append("thead");
-    const headerRow = thead.append("tr");
+    const thead = table.append("thead").attr("class", designSystemPreview ? "ons-table__head" : null);
+    const headerRow = thead.append("tr").attr("class", designSystemPreview ? "ons-table__row" : null);
 
     const corner = headerRow.append("th")
         .attr("scope", "col")
-        .attr("class", "col--text corner-cell")
+        .attr("class", designSystemPreview ? "ons-table__header ons-table__header--top corner-cell" : "col--text corner-cell")
         .attr("id", "corner");
 
     if (config.firstColHeader) {
@@ -335,17 +348,15 @@ function drawTable() {
         .append("th")
         .attr("scope", "col")
         .attr("id", d => d.id)
-        .attr("class", d =>
-            d.type === "n" ? "col--number" :
-                d.type === "d" ? "col--date" :
-                    "col--text"
-        )
+        .attr("class", d => designSystemPreview
+            ? `ons-table__header ons-table__header--top${d.type === "n" ? " ons-table__header--numeric" : ""}`
+            : d.type === "n" ? "col--number" : d.type === "d" ? "col--date" : "col--text")
         .text(d => d.col);
 
     /* =========================================================
        TBODY
     ========================================================= */
-    const tbody = table.append("tbody");
+    const tbody = table.append("tbody").attr("class", designSystemPreview ? "ons-table__body" : null);
 
     /* =========================================================
        PAGINATION CONTAINER
@@ -489,12 +500,12 @@ function drawTable() {
 
         pageData.forEach((row, index) => {
             const rowId = `r${start + index + 1}`;
-            const tr = tbody.append("tr");
+            const tr = tbody.append("tr").attr("class", designSystemPreview ? "ons-table__row" : null);
 
             tr.append("th")
                 .attr("id", rowId)
                 .attr("scope", "row")
-                .attr("class", "col--text")
+                .attr("class", cellClass("t"))
                 .text(row[nameColumn]);
 
             tr.selectAll("td")
@@ -531,11 +542,7 @@ function drawTable() {
                 .enter()
                 .append("td")
                 .attr("headers", d => `${rowId} ${d.col}`)
-                .attr("class", d =>
-                    d.type === "n" ? "col--number" :
-                        d.type === "d" ? "col--date" :
-                            "col--text"
-                )
+                .attr("class", d => cellClass(d.type))
                 .each(function (d) {
 
                     const cell = d3.select(this);
