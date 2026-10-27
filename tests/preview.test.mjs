@@ -31,6 +31,20 @@ test("the preview copies the design-system stylesheet and its relative fonts", a
   assert.ok(font.size > 0);
 });
 
+test("the preview uses the design-system wide container without a custom width limit", async () => {
+  const [html, css, previewCss] = await Promise.all([
+    read("design-system-preview/index.html"),
+    read("design-system-preview/assets/css/main.css"),
+    read("design-system-preview/preview.css"),
+  ]);
+
+  assert.match(html, /<main class="ons-container ons-container--wide preview-layout">/);
+  assert.match(css, /\.ons-container--wide\s*\{/);
+  const layout = previewCss.match(/\.preview-layout\s*\{([^}]+)\}/);
+  assert.ok(layout);
+  assert.doesNotMatch(layout[1], /(?:max-)?width\s*:/);
+});
+
 test("all five example configurations are available in the context preview", async () => {
   const [html, loader] = await Promise.all([
     read("design-system-preview/index.html"),

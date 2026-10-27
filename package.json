@@ -6,7 +6,7 @@
     "test": "npm run build:preview && node --test tests/*.test.mjs"
   },
   "devDependencies": {
-    "@ons/design-system": "73.12.0",
+    "@ons/design-system": "74.0.0-next.16",
     "nunjucks": "3.2.4"
   }
 }

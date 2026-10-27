@@ -1,7 +1,6 @@
 .preview-layout {
-    max-width: 75rem;
-    margin: 0 auto;
-    padding: 2rem 1rem;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
 }
 
 .preview-layout section {

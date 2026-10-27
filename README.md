@@ -16,7 +16,7 @@ Open <http://localhost:8000/>. The ungrouped and grouped template pages are also
 
 ### Preview with the ONS Design System
 
-The separate context preview uses a fixed version of the **published** `@ons/design-system` package. It builds a real Design System table from the package's Nunjucks macro as a reference and renders the existing configurable tables in the **same document** with the package's CSS. This small build is enough to test table markup and styling without migrating the working embeds into a prototype-kit project. Use the prototype-kit template if a full Design System page/layout and prototype navigation become requirements. Node.js and npm are needed for this optional preview:
+The separate context preview uses a fixed version of the **published** `@ons/design-system` package, currently the `74.0.0-next.16` prerelease for testing the unreleased Design System in wide mode. Its layout uses `ons-container ons-container--wide`, with the width supplied by the package rather than a custom preview limit. This is a prerelease evaluation, not a stable-release recommendation. It builds a real Design System table from the package's Nunjucks macro as a reference and renders the existing configurable tables in the **same document** with the package's CSS. This small build is enough to test table markup and styling without migrating the working embeds into a prototype-kit project. Use the prototype-kit template if a full Design System page/layout and prototype navigation become requirements. Node.js and npm are needed for this optional preview:
 
 ```bash
 npm ci
