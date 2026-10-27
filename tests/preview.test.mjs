@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import test from "node:test";
 import nunjucks from "nunjucks";
 import MarkdownIt from "markdown-it";
+import { sparklineData } from "../scripts/sparkline.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = file => readFile(path.join(root, file), "utf8");
@@ -68,10 +69,11 @@ test("all five example configurations are available in the context preview", asy
 test("the meeting page renders both examples from their displayed Nunjucks source", async () => {
   const html = await read("design-system-preview/nunjucks-examples.html");
   const environment = new nunjucks.Environment(new nunjucks.FileSystemLoader(
-    path.join(root, "node_modules/@ons/design-system"),
+    [path.join(root, "design-system-preview"), path.join(root, "node_modules/@ons/design-system")],
   ), { autoescape: true });
+  environment.addFilter("sparklineData", sparklineData);
 
-  for (const key of ["ungrouped", "grouped"]) {
+  for (const key of ["ungrouped", "grouped", "ungrouped-sparkline", "grouped-sparkline"]) {
     const source = await read(`design-system-preview/examples/${key}.njk`);
     const rendered = environment.renderString(source);
     assert.ok(html.includes(rendered), `${key} renders the real native macro`);
@@ -82,9 +84,19 @@ test("the meeting page renders both examples from their displayed Nunjucks sourc
     assert.match(rendered, /scope="row"/);
     assert.match(rendered, /role="region"\s+aria-label=/);
     const body = rendered.match(/<tbody[^>]*>([\s\S]*?)<\/tbody>/)[1];
-    assert.equal((body.match(/<tr\s/g) || []).length, key === "grouped" ? 4 : 2);
-    assert.equal((body.match(/rowspan="2"/g) || []).length, key === "grouped" ? 2 : 0);
-    assert.equal((body.match(/<t[dh]\s/g) || []).length, key === "grouped" ? 10 : 4);
+    const grouped = key.startsWith("grouped");
+    const sparkline = key.endsWith("-sparkline");
+    const rows = grouped ? 4 : 2;
+    assert.equal((body.match(/<tr\s/g) || []).length, rows);
+    assert.equal((body.match(/rowspan="2"/g) || []).length, grouped ? 2 : 0);
+    assert.equal((body.match(/<t[dh]\s/g) || []).length, (grouped ? 10 : 4) + (sparkline ? rows : 0));
+    if (sparkline) {
+      assert.equal((body.match(/<svg /g) || []).length, rows);
+      assert.equal((body.match(/aria-hidden="true" focusable="false"/g) || []).length, rows);
+      assert.equal((body.match(/<span class="ons-u-vh">/g) || []).length, rows);
+      assert.match(body, /2022: 8, 2023: 11, 2024: 9, 2025: 12/);
+      assert.doesNotMatch(body, /NaN|Infinity|&lt;svg/);
+    }
   }
   assert.match(html, /Prototype limitation:/);
   assert.doesNotMatch(html, /<script/);
@@ -96,13 +108,67 @@ test("both examples display the shared Markdown options as real tables", async (
     read("design-system-preview/examples/_macro-options.md"),
   ]);
   const options = new MarkdownIt({ html: false }).render(markdown);
-  assert.equal(html.split(options).length - 1, 2);
+  assert.equal(html.split(options).length - 1, 4);
   assert.equal((options.match(/<table>/g) || []).length, 4);
   for (const name of ["caption", "ariaLabel", "ths", "trs", "tds", "value", "heading", "numeric", "rowspan"]) {
     assert.ok(options.includes(`<td>${name}</td>`), `${name} is documented`);
   }
-  assert.equal((html.match(/<details class="preview-documentation" open>/g) || []).length, 2);
+  assert.equal((html.match(/<details class="preview-documentation" open>/g) || []).length, 4);
   assert.doesNotMatch(html, /<td>\s*\|/);
+});
+
+test("sparkline geometry supports rising, negative and constant series", () => {
+  const series = [
+    { label: "2024", value: -2 },
+    { label: "2025", value: 0 },
+    { label: "2026", value: 2 },
+  ];
+  assert.deepEqual(sparklineData({ label: "Trend", series }), {
+    width: 160, height: 40,
+    points: "4.00,36.00 80.00,20.00 156.00,4.00",
+    description: "Trend: 2024: -2, 2025: 0, 2026: 2",
+  });
+  assert.equal(sparklineData({
+    label: "Flat", width: 80, height: 24,
+    series: series.map(point => ({ ...point, value: 0 })),
+  }).points, "4.00,12.00 40.00,12.00 76.00,12.00");
+});
+
+test("invalid sparkline inputs fail explicitly rather than producing broken charts", () => {
+  const valid = { label: "Trend", series: [{ label: "A", value: 1 }, { label: "B", value: 2 }] };
+  for (const params of [
+    { ...valid, label: "" },
+    { ...valid, series: [] },
+    { ...valid, series: [{ label: "A", value: 1 }] },
+    { ...valid, series: [{ label: "", value: 1 }, { label: "B", value: 2 }] },
+    { ...valid, series: [{ label: "A", value: null }, { label: "B", value: 2 }] },
+    { ...valid, series: [{ label: "A", value: Infinity }, { label: "B", value: 2 }] },
+    { ...valid, width: 0 },
+    { ...valid, height: NaN },
+  ]) {
+    assert.throws(() => sparklineData(params), /Sparkline/);
+  }
+});
+
+test("sparkline examples document their local macro and escape text alternatives", async () => {
+  const html = await read("design-system-preview/nunjucks-examples.html");
+  const options = new MarkdownIt({ html: false }).render(
+    await read("design-system-preview/examples/_sparkline-options.md"),
+  );
+  assert.equal(html.split(options).length - 1, 2);
+  for (const name of ["label", "series", "width", "height", "value"]) {
+    assert.ok(options.includes(`<td>${name}</td>`));
+  }
+  const environment = new nunjucks.Environment(new nunjucks.FileSystemLoader(
+    path.join(root, "design-system-preview"),
+  ), { autoescape: true });
+  environment.addFilter("sparklineData", sparklineData);
+  const rendered = environment.renderString(
+    '{% from "examples/_sparkline.njk" import previewSparkline %}{{ previewSparkline(params) }}',
+    { params: { label: "<script>alert(1)</script>", series: [{ label: "A", value: 1 }, { label: "B", value: 2 }] } },
+  );
+  assert.doesNotMatch(rendered, /<script>/);
+  assert.match(rendered, /&lt;script&gt;/);
 });
 
 test("the existing preview links to the standalone meeting demonstration", async () => {

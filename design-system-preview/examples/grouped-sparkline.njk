@@ -1,0 +1,83 @@
+{% from "components/table/_macro.njk" import onsTable %}
+{% from "examples/_sparkline.njk" import previewSparkline %}
+{% set trendA1 %}
+    {{ previewSparkline({
+        "label": "Group A, Area A1 trend",
+        "series": [
+            { "label": "2022", "value": 8 },
+            { "label": "2023", "value": 11 },
+            { "label": "2024", "value": 9 },
+            { "label": "2025", "value": 12 }
+        ]
+    }) }}
+{% endset %}
+{% set trendA2 %}
+    {{ previewSparkline({
+        "label": "Group A, Area A2 trend",
+        "series": [
+            { "label": "2022", "value": 40 },
+            { "label": "2023", "value": 36 },
+            { "label": "2024", "value": 38 },
+            { "label": "2025", "value": 34 }
+        ]
+    }) }}
+{% endset %}
+{% set trendB1 %}
+    {{ previewSparkline({
+        "label": "Group B, Area B1 trend",
+        "series": [
+            { "label": "2022", "value": 50 },
+            { "label": "2023", "value": 52 },
+            { "label": "2024", "value": 51 },
+            { "label": "2025", "value": 56 }
+        ]
+    }) }}
+{% endset %}
+{% set trendB2 %}
+    {{ previewSparkline({
+        "label": "Group B, Area B2 trend",
+        "series": [
+            { "label": "2022", "value": 78 },
+            { "label": "2023", "value": 78 },
+            { "label": "2024", "value": 78 },
+            { "label": "2025", "value": 78 }
+        ]
+    }) }}
+{% endset %}
+{{
+    onsTable({
+        "id": "meeting-grouped-sparkline",
+        "caption": "Grouped-row sparklines: illustrative values",
+        "ariaLabel": "Grouped-row sparklines: illustrative values",
+        "ths": [
+            { "value": "Group" },
+            { "value": "Area" },
+            { "value": "2025 value", "numeric": true },
+            { "value": "Trend, 2022 to 2025" }
+        ],
+        "trs": [
+            { "tds": [
+                { "value": "Group A", "heading": true, "rowspan": 2 },
+                { "value": "Area A1", "heading": true },
+                { "value": "12", "numeric": true },
+                { "value": trendA1 }
+            ] },
+            { "tds": [
+                { "value": "Area A2", "heading": true },
+                { "value": "34", "numeric": true },
+                { "value": trendA2 }
+            ] },
+            { "tds": [
+                { "value": "Group B", "heading": true, "rowspan": 2 },
+                { "value": "Area B1", "heading": true },
+                { "value": "56", "numeric": true },
+                { "value": trendB1 }
+            ] },
+            { "tds": [
+                { "value": "Area B2", "heading": true },
+                { "value": "78", "numeric": true },
+                { "value": trendB2 }
+            ] }
+        ]
+    })
+}}

@@ -19,6 +19,13 @@
     padding: 1rem;
 }
 
+.preview-sparkline {
+    display: block;
+    color: var(--ons-color-branded);
+    max-width: 100%;
+    height: auto;
+}
+
 .preview-documentation summary {
     cursor: pointer;
     font-weight: bold;

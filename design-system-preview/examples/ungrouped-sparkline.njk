@@ -1,0 +1,48 @@
+{% from "components/table/_macro.njk" import onsTable %}
+{% from "examples/_sparkline.njk" import previewSparkline %}
+{% set trendA %}
+    {{ previewSparkline({
+        "label": "Area A trend",
+        "series": [
+            { "label": "2022", "value": 8 },
+            { "label": "2023", "value": 11 },
+            { "label": "2024", "value": 9 },
+            { "label": "2025", "value": 12 }
+        ]
+    }) }}
+{% endset %}
+{% set trendB %}
+    {{ previewSparkline({
+        "label": "Area B trend",
+        "series": [
+            { "label": "2022", "value": 40 },
+            { "label": "2023", "value": 36 },
+            { "label": "2024", "value": 38 },
+            { "label": "2025", "value": 34 }
+        ]
+    }) }}
+{% endset %}
+{{
+    onsTable({
+        "id": "meeting-ungrouped-sparkline",
+        "caption": "Ungrouped sparklines: illustrative values",
+        "ariaLabel": "Ungrouped sparklines: illustrative values",
+        "ths": [
+            { "value": "Area" },
+            { "value": "2025 value", "numeric": true },
+            { "value": "Trend, 2022 to 2025" }
+        ],
+        "trs": [
+            { "tds": [
+                { "value": "Area A", "heading": true },
+                { "value": "12", "numeric": true },
+                { "value": trendA }
+            ] },
+            { "tds": [
+                { "value": "Area B", "heading": true },
+                { "value": "34", "numeric": true },
+                { "value": trendB }
+            ] }
+        ]
+    })
+}}

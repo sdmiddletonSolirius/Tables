@@ -11,7 +11,7 @@
     <main class="ons-container ons-container--wide preview-layout">
         <h1>Tables: Nunjucks examples and options</h1>
         <p>Meeting prototype using @ons/design-system {{ designSystemVersion }}. One Table component, two structures, with shared macro options.</p>
-        <p>These are working calls to the existing <code>onsTable</code> macro, not a new API for the JavaScript data visualisation tables. All values are illustrative.</p>
+        <p>These are working calls to the existing <code>onsTable</code> macro, not a new API for the JavaScript data visualisation tables. Sparkline examples add a local prototype macro, not a published Design System feature. All values are illustrative.</p>
         <p><a href="./">Back to the data visualisation context preview</a></p>
         <nav aria-label="Table examples" class="preview-choices">
             {% for example in examples %}
@@ -22,7 +22,7 @@
             <section id="{{ example.key }}" aria-labelledby="{{ example.key }}-heading">
                 <h2 id="{{ example.key }}-heading">{{ example.title }}</h2>
                 <p>{{ example.description }}</p>
-                {% if example.key == "grouped" %}
+                {% if example.key == "grouped" or example.key == "grouped-sparkline" %}
                     <p><strong>Prototype limitation:</strong> this demonstrates the native macro's merged cells, not the publication template's full grouped-header semantics. The native macro uses <code>scope="row"</code> for row headings, including merged headings. Group associations need dedicated accessibility review before production use.</p>
                 {% endif %}
                 {{ example.html | safe }}
@@ -32,11 +32,20 @@
                 </details>
                 <details class="preview-documentation" open>
                     <summary>Nunjucks macro options for {{ example.title | lower }}</summary>
-                    <p>Options used by these two examples only. Both use the same native macro and options; grouping is expressed through cells and <code>rowspan</code>, not a <code>grouped</code> parameter.</p>
+                    <p>Native table options used by these examples. Grouping is expressed through cells and <code>rowspan</code>, not a <code>grouped</code> parameter.</p>
                     <div class="preview-options" tabindex="0" role="region" aria-label="Macro options for {{ example.title | lower }}">
                         {{ macroOptions | safe }}
+                        {% if example.sparkline %}
+                            {{ sparklineOptions | safe }}
+                        {% endif %}
                     </div>
                 </details>
+                {% if example.sparkline %}
+                    <details class="preview-documentation">
+                        <summary>Local prototype sparkline macro source</summary>
+                        <pre class="preview-code"><code>{{ sparklineSource }}</code></pre>
+                    </details>
+                {% endif %}
                 <details class="preview-documentation">
                     <summary>HTML for {{ example.title | lower }}</summary>
                     <pre class="preview-code"><code>{{ example.html }}</code></pre>
