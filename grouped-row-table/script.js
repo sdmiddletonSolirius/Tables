@@ -517,6 +517,7 @@ Renders configured columns as small horizontal bars.
                                 kind: "sparkline",
                                 cols: d.cols,
                                 col: d.title,
+                                title: d.title,
                                 value: null,
                                 type: "h",
                                 i: null
@@ -706,6 +707,7 @@ Renders configured columns as small horizontal bars.
                                 kind: "sparkline",
                                 cols: d.cols,
                                 col: d.title,
+                                title: d.title,
                                 value: null,
                                 type: "h",
                                 i: null

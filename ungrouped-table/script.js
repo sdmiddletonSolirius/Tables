@@ -515,6 +515,7 @@ function drawTable() {
                             kind: "sparkline",
                             cols: d.cols,
                             col: d.title,
+                            title: d.title,
                             value: null,
                             type: "h",
                             i: null

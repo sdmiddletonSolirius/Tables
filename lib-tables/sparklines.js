@@ -91,6 +91,6 @@ export function addSparkline({
         .join(", ");
 
     cell.append("span")
-        .attr("class", "visually-hidden")
+        .attr("class", document.body.classList.contains("design-system-preview") ? "ons-u-vh" : "visually-hidden")
         .text(`${d.title} — ${descriptionText}`);
 }
