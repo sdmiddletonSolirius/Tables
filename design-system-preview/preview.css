@@ -13,6 +13,48 @@
     gap: 1rem;
 }
 
+.preview-documentation {
+    margin: 1rem 0;
+    border: 1px solid var(--ons-color-borders);
+    padding: 1rem;
+}
+
+.preview-documentation summary {
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.preview-code,
+.preview-options {
+    max-width: 100%;
+    overflow-x: auto;
+    margin-top: 1rem;
+}
+
+.preview-code {
+    padding: 1rem;
+    background: var(--ons-color-page-light);
+    white-space: pre;
+}
+
+.preview-options table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.preview-options th,
+.preview-options td {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--ons-color-borders);
+    text-align: left;
+    vertical-align: top;
+}
+
+.preview-documentation summary:focus-visible,
+.preview-options:focus-visible {
+    outline: 3px solid var(--ons-color-focus);
+}
+
 .design-system-preview .table-scroll {
     max-width: 100%;
     overflow-x: auto;

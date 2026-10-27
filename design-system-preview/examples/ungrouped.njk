@@ -1,0 +1,26 @@
+{% from "components/table/_macro.njk" import onsTable %}
+{{
+    onsTable({
+        "id": "meeting-ungrouped",
+        "caption": "Ungrouped table: illustrative values",
+        "ariaLabel": "Ungrouped table: illustrative values",
+        "ths": [
+            { "value": "Area" },
+            { "value": "Value", "numeric": true }
+        ],
+        "trs": [
+            {
+                "tds": [
+                    { "value": "Area A", "heading": true },
+                    { "value": "12", "numeric": true }
+                ]
+            },
+            {
+                "tds": [
+                    { "value": "Area B", "heading": true },
+                    { "value": "34", "numeric": true }
+                ]
+            }
+        ]
+    })
+}}

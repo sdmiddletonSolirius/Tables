@@ -2,6 +2,7 @@ import { cp, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import nunjucks from "nunjucks";
+import MarkdownIt from "markdown-it";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const designSystem = path.join(root, "node_modules/@ons/design-system");
@@ -21,4 +22,27 @@ await cp(path.join(designSystem, "css"), path.join(output, "assets/css"), { recu
 await cp(path.join(designSystem, "fonts"), path.join(output, "assets/fonts"), { recursive: true });
 await writeFile(path.join(output, "index.html"), environment.render("index.njk", {
   designSystemVersion: packageInfo.version,
+}));
+
+const examples = await Promise.all([
+  {
+    key: "ungrouped",
+    title: "Ungrouped table",
+    description: "A rectangular table with one row heading and one numeric value per row.",
+  },
+  {
+    key: "grouped",
+    title: "Grouped-row table",
+    description: "Two sets of rows, each with a group heading spanning two rows. Subsequent rows omit the occupied group cell.",
+  },
+].map(async example => {
+  const source = await readFile(path.join(output, "examples", `${example.key}.njk`), "utf8");
+  return { ...example, source, html: environment.renderString(source) };
+}));
+const markdown = new MarkdownIt({ html: false });
+const optionsSource = await readFile(path.join(output, "examples/_macro-options.md"), "utf8");
+await writeFile(path.join(output, "nunjucks-examples.html"), environment.render("nunjucks-examples.njk", {
+  designSystemVersion: packageInfo.version,
+  examples,
+  macroOptions: markdown.render(optionsSource),
 }));

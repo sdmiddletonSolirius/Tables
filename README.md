@@ -28,6 +28,14 @@ Open <http://localhost:8000/design-system-preview/> and choose one of the five c
 
 The installed package version is pinned in `package.json` and `package-lock.json`, rather than being fetched as `latest` on every run. To evaluate a newer published release, run `npm install --save-dev --save-exact @ons/design-system@<version>`, rebuild, run the tests and review **all five** configurations at narrow and wide widths. Keep the resulting lockfile change with the version change; do not edit the installed package directly.
 
+### Nunjucks examples and options
+
+After building the preview, open <http://localhost:8000/design-system-preview/nunjucks-examples.html> for a meeting demonstration of one ungrouped and one grouped-row table. Each example includes a live native `onsTable` rendering, its exact Nunjucks source, a rendered Markdown options table (expanded by default), and its generated HTML. This page works without CDN scripts.
+
+The editable examples and shared `_macro-options.md` are in `design-system-preview/examples/`. The build renders both examples from their displayed source and converts the Markdown with `markdown-it`. Rebuild after editing them. The generated page is ignored by Git, like the existing preview.
+
+This demonstrates one native component with two table structures, not a new Nunjucks interface to the JavaScript/CSV templates. Only the options exercised by these examples are documented. The grouped example uses native merged row headings (`rowspan`); it does not reproduce the publication template's complex header associations. The native macro applies `scope="row"` to those headings, so grouped associations require dedicated accessibility review before production use.
+
 ### What this checks
 
 The embedded pages use their own `col--*`, `table-scroll` and pagination classes, plus local CSS. The context preview makes the dynamic table emit the Design System's `ons-table`, `ons-table__head`, `ons-table__row`, `ons-table__header`, `ons-table__cell` and numeric/top modifiers, alongside the native table. It loads the published CSS inside the same document and scopes its remaining visualisation-specific styling; simply wrapping the original Pym iframe in a styled page would not check this. The original embedded markup and CSS remain unchanged.

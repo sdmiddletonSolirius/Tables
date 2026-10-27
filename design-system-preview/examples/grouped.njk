@@ -1,0 +1,41 @@
+{% from "components/table/_macro.njk" import onsTable %}
+{{
+    onsTable({
+        "id": "meeting-grouped",
+        "caption": "Grouped-row table: illustrative values",
+        "ariaLabel": "Grouped-row table: illustrative values",
+        "ths": [
+            { "value": "Group" },
+            { "value": "Area" },
+            { "value": "Value", "numeric": true }
+        ],
+        "trs": [
+            {
+                "tds": [
+                    { "value": "Group A", "heading": true, "rowspan": 2 },
+                    { "value": "Area A1", "heading": true },
+                    { "value": "12", "numeric": true }
+                ]
+            },
+            {
+                "tds": [
+                    { "value": "Area A2", "heading": true },
+                    { "value": "34", "numeric": true }
+                ]
+            },
+            {
+                "tds": [
+                    { "value": "Group B", "heading": true, "rowspan": 2 },
+                    { "value": "Area B1", "heading": true },
+                    { "value": "56", "numeric": true }
+                ]
+            },
+            {
+                "tds": [
+                    { "value": "Area B2", "heading": true },
+                    { "value": "78", "numeric": true }
+                ]
+            }
+        ]
+    })
+}}
